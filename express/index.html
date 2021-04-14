@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Demo App</title>
+
+	<!-- Okta Sign-In Widget: Core js and css -->
+
+  <style>
+     #okta-sign-in.auth-container.main-container[data-se=auth-container] {
+       /* border-color: #BEBDBD;
+       background: #BEBDBD; */
+       border-color: #FFFFFF;
+       background: #FFFFFF;
+     }
+
+     #okta-sign-in.auth-container .button-primary {
+       background: #012F60 !important;
+       border-color: #012F60 !important;
+     }
+
+     #okta-sign-in.auth-container.main-container .auth-header {
+       border-color: #BEBDBD;
+     }
+
+     /* #okta-sign-in.auth-container.main-container .auth-footer {
+       display:  ;
+     } */
+
+ </style>
+
+  <script src="https://global.oktacdn.com/okta-signin-widget/3.9.0/js/okta-sign-in.min.js" type="text/javascript"></script>
+
+  <link href="https://global.oktacdn.com/okta-signin-widget/3.9.0/css/okta-sign-in.min.css" type="text/css" rel="stylesheet"/>
+  <style>
+  body {
+     background-image: url("https://getwallpapers.com/wallpaper/full/1/9/4/335210.jpg");
+     background-size: cover;
+   }
+   </style>
+</head>
+<body>
+
+  <script>
+  function getParameterByName(name, url) {
+    if (!url) url = wwindow.location.origin;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+        console.log(results);
+    return decodeURIComponent(results[2]);
+  }
+  </script>
+  <div id="okta-login-container"></div>
+
+  <div class="footer">
+    Demo Application. Powered by Okta
+  </div>
+
+  <script type="text/javascript">
+      var orgUrl = 'https://login.vigneshl.com';
+      var oktaSignIn = new OktaSignIn({
+      baseUrl: orgUrl,
+      logo: 'https://martinsblog.dk/wp-content/uploads/2017/11/BusinessPartner_HPE_logo_color_small.png',
+      redirectUri: window.location.origin+'/oauth2/callback',
+      clientId:'0oaaev18b8ILWObsx2p7',
+      authParams: {
+        issuer: 'https://login.vigneshl.com/oauth2/default',
+        display: 'page',
+        responseMode: 'query',
+        pkce: true,
+        scopes: ['openid',"offline_access"]
+      },
+      helpSupportNumber: '(123) 456-7890',
+      language: 'en',
+      i18n: {
+        en: {
+          'primaryauth.title' : 'Please sign in:',
+          'primaryauth.username.placeholder' : 'Username:',
+          'primaryauth.password.placeholder' : 'Password:',
+        //  'primaryauth.password.tooltip' : 'Password',
+          'primaryauth.submit' : 'Sign In',
+          'unlockaccount' :  'Unlock account?',
+          'forgotpassword' : 'Forgot your password?',
+          'needhelp' : 'Help & Privacy',
+          'help' : 'Terms Of Use'
+        }
+      },
+
+      features: {
+            rememberMe: true,
+            smsRecovery: false,
+            selfServiceUnlock: false,
+            registration: false,
+    	      idpDiscovery: false,
+            autoPush: true,
+            webauthn: true,
+          //  passwordlessAuth: true
+     	},
+
+      colors: {
+        brand: '#BEBDBD'
+      }
+      });
+
+      oktaSignIn.authClient.session.get().then(function (res) {
+         // Session exists, show logged in state.
+         if (res.status === 'ACTIVE') {
+           console.log('Welcome back, ' + res.login);
+             oktaSignIn.authClient.token.getWithRedirect({
+                responseType: ['code'],
+                scopes: ['openid',"offline_access"]
+                // state: 'test' // will be URI encoded
+              })
+              .catch(function(err) {
+                // handle AuthSdkError (AuthSdkError will be thrown if app is in OAuthCallback state)
+              });
+           return;
+         }
+         oktaSignIn.renderEl(
+
+           {el: '#okta-login-container'},
+           function (res) {
+             if (res.status === 'SUCCESS') {
+               window.alert(
+                 "Reminder for " + res.user.profile.firstName + ".\n" +
+                 "To concentrate communications, " +
+                 "avoid sharing your email (" +
+                 res.user.profile.login +
+                 ") with customers."
+               );
+             }
+           },
+           function error(err) {
+             // handle errors as needed
+             console.error(err);
+           }
+         );
+
+       });
+
+      </script>
+  </body>
+
+  <!-- Default page style -->
+  <style>
+    .title {
+      padding: 40px;
+      font: normal 34px/1 Verdana, Geneva, sans-serif;
+      color: black;
+      text-align: center;
+      letter-spacing: 7px;
+    }
+    .footer {
+      font: normal 14px/1 Verdana, Geneva, sans-serif;
+      padding: 10px;
+      color: black;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #F0F0F0;
+    }
+    #okta-sign-in.auth-container.main-container {
+    background-color: red;
+    }
+
+    #okta-sign-in .beacon-blank {
+        background-color: red;
+    }
+  </style>
+  <!-- Default page style -->
+</body>
+</html>
